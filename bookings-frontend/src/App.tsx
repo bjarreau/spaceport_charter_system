@@ -7,7 +7,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/dashboard" element={<DashboardPage />} />
-		<Route path="/ships/:shipId" element={<BookingPage />} />
+		<Route path="/bookings" element={<BookingPage />} />
       </Routes>
     </BrowserRouter>
   );
