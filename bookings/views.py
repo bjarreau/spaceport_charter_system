@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .models import Ship
+from .models import Ship, Booking
 
 # Create your views here.
 def get_ships(request):
