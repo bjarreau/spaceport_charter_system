@@ -7,7 +7,12 @@ export default function BookingPage() {
 	const [selectedShipId, setSelectedShipId] = useState<number | null>(null);
 	const [selectedDate, setSelectedDate] = useState("");
 	const [free, setFree] = useState<string[]>([]);
+	const [selected, setSelected] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	
+	useEffect(() => {
+		setSelected(null);
+	}, [selectedShipId, selectedDate]);
 	
 	useEffect(() => {
 		if (!selectedShipId || !selectedDate) return;
@@ -34,10 +39,16 @@ export default function BookingPage() {
 		)}
 		
 		{selectedDate && !loading && (
-		  <ShipAvailability free={free} />
+		  <ShipAvailability free={free} selected={selected} onSelect={setSelected}/>
 		)}
 		
 		{loading && <p> Loading ... </p>}
+		
+		{selected && (
+		  <div style={{marginTop: "1rem"}}>
+		    <strong>Selected Time:</strong> {selected}
+	      </div>
+		)}
 	  </div>
 	);
 }
