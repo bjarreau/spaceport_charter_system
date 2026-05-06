@@ -10,6 +10,30 @@ from datetime import datetime, timedelta, time
 def get_ships(request):
     ships = list(Ship.objects.values('id', 'name'))
     return JsonResponse(ships, safe=False)
+
+def get_dashboard_data(request):
+    ships = Ship.objects.all().order_by("name")
+    bookings = Booking.objects.select_related("shipId").order_by("startTime")
+
+    # Group bookings by shipId
+    grouped = {}
+    for ship in ships:
+        grouped[ship.id] = {
+            "shipId": ship.id,
+            "shipName": ship.name,
+            "bookings": []
+        }
+
+    for b in bookings:
+        grouped[b.shipId.id]["bookings"].append({
+            "id": b.id,
+            "date": b.startTime.date().isoformat(),
+            "startTime": b.startTime.strftime("%H:%M"),
+            "endTime": b.endTime.strftime("%H:%M"),
+            "pilot": b.pilotName,
+        })
+
+    return JsonResponse({"ships": list(grouped.values())})
     
 def get_ship_bookings(request, ship_id):
     bookings = list(
