@@ -1,4 +1,8 @@
 from django.http import JsonResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.utils.timezone import make_aware
 from .models import Ship, Booking
 from datetime import datetime, timedelta, time
 
@@ -48,3 +52,59 @@ def get_ship_availability(request, ship_id):
         "free": free,
         "blocked": sorted(list(blocked))
     })
+    
+class CreateBooking(APIView):
+    def post(self, request):
+        data = request.data
+
+        ship_id = data.get("shipId")
+        start_str = data.get("startTime")
+        duration = data.get("durationMinutes")
+        pilot = data.get("pilotName", "")
+        
+        #check the required data
+        if not ship_id or not start_str or not duration:
+            return Response({"error": "Missing required fields"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        #check the time format
+        try:
+            start = make_aware(datetime.fromisoformat(start_str))
+        except:
+            return Response({"error": "Invalid startTime format"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        end = start + timedelta(minutes=duration)
+        
+        #check the hours
+        if start.hour < 6 or end.hour > 22 or (end.hour == 22 and end.minute > 0):
+            return Response({"error": "Outside operating hours"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        #check that refill buffer
+        buffer_end = end + timedelta(minutes=30)
+        overlapping = Booking.objects.filter(
+            shipId=ship_id,
+            startTime__lt=buffer_end,
+            endTime__gt=start
+        )
+        
+        if overlapping.exists():
+            return Response({"error": "Time slot unavailable"},
+                status=status.HTTP_409_CONFLICT
+            )
+        
+        #if we made it this far, we are good to book
+        booking = Booking.objects.create(
+            shipId_id=ship_id,
+            pilotName=pilot,
+            startTIme=start,
+            endTIme=end
+        )
+
+        return Response({"success": True, "bookingId": booking.id},
+            status=status.HTTP_201_CREATED
+        )
