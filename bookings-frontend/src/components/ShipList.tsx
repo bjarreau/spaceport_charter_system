@@ -1,25 +1,61 @@
 import { useEffect, useState } from "react";
-import { getShips } from "../api/ships";
+import { getDashboardData } from "../api/ships";
 
 type Ship = {
-	id: number;
-	name: string;
-}
+  shipId: number;
+  shipName: string;
+  bookings: {
+    id: number;
+    date: string;
+    startTime: string;
+    endTime: string;
+    pilot: string;
+  }[];
+};
 
 export default function ShipList() {
 	const [ships, setShips] = useState<Ship[]>([]);
 	useEffect(() => {
-		getShips().then(setShips);
+		getDashboardData().then(setShips);
 	}, []);
 	
 	return (
 	  <div>
-	    <h2> Available Ships </h2>
-		<ul>
+	    <h2>Ship Dashboard</h2>
 		{ships.map(ship => (
-		  <li key={ship.id}>{ship.name}</li>
-		))}
-		</ul> 
+          <div key={ship.shipId} style={{ marginBottom: "2rem" }}>
+            <h3>{ship.shipName}</h3>
+
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ borderBottom: "1px solid #ccc" }}>Date</th>
+                  <th style={{ borderBottom: "1px solid #ccc" }}>Start</th>
+                  <th style={{ borderBottom: "1px solid #ccc" }}>End</th>
+                  <th style={{ borderBottom: "1px solid #ccc" }}>Pilot</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ship.bookings.length === 0 && (
+                  <tr>
+                    <td colSpan={4} style={{ padding: "0.5rem", color: "#777" }}>
+                      No bookings
+                    </td>
+                  </tr>
+                )}
+
+                {ship.bookings.map(b => (
+                  <tr key={b.id}>
+                    <td>{b.date}</td>
+                    <td>{b.startTime}</td>
+                    <td>{b.endTime}</td>
+                    <td>{b.pilot}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))} 
 	  </div>
 	);
 }
