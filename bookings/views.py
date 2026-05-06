@@ -101,8 +101,8 @@ class CreateBooking(APIView):
         booking = Booking.objects.create(
             shipId_id=ship_id,
             pilotName=pilot,
-            startTIme=start,
-            endTIme=end
+            startTime=start,
+            endTime=end
         )
 
         return Response({"success": True, "bookingId": booking.id},
