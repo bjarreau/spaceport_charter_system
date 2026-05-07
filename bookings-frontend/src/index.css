@@ -11,3 +11,98 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  font-size: 14px;
+}
+
+.dashboard-table th {
+  font-weight: 600;
+  background: #f7f7f7;
+}
+
+.booking-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: system-ui, sans-serif;
+}
+
+.booking-section {
+  margin-bottom: 1.5rem;
+}
+
+.booking-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.booking-input,
+.booking-select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.timeslot-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.timeslot-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.timeslot-btn:hover {
+  background: #eaeaea;
+}
+
+.timeslot-btn.selected {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.book-btn {
+  margin-top: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.book-btn:hover {
+  background: #218838;
+}
+
+.success-message {
+  margin-top: 1rem;
+  color: #28a745;
+  font-weight: 600;
+}

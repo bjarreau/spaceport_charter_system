@@ -26,15 +26,15 @@ export default function ShipList() {
           <div key={ship.shipId} style={{ marginBottom: "2rem" }}>
             <h3>{ship.shipName}</h3>
 
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="dashboard-table">
               <thead>
-                <tr>
-                  <th style={{ borderBottom: "1px solid #ccc" }}>Date</th>
-                  <th style={{ borderBottom: "1px solid #ccc" }}>Start</th>
-                  <th style={{ borderBottom: "1px solid #ccc" }}>End</th>
-                  <th style={{ borderBottom: "1px solid #ccc" }}>Pilot</th>
-                </tr>
-              </thead>
+				<tr>
+				  <th>Date</th>
+				  <th>Start</th>
+				  <th>End</th>
+				  <th>Pilot</th>
+				</tr>
+			  </thead>
               <tbody>
                 {ship.bookings.length === 0 && (
                   <tr>

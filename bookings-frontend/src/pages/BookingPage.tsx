@@ -103,15 +103,18 @@ export default function BookingPage() {
 	  };
 	
 	return (
-	  <div>
+	  <div className="booking-container">
 	    <h2> Book Your Ship! </h2>
-		<ShipDropDown onSelect={setSelectedShipId} />
+		  <div className="booking-section">
+		    <ShipDropDown onSelect={setSelectedShipId} />
+		  </div>
 		
 		{selectedShipId && (
-		  <div style={{ marginTop: "1rem" }}>
-		    <label> Select a date: </label>
+		  <div className="booking-section">
+		    <h3> Select a date: </h3>
 			<input 
 			  type="date" 
+			  className="booking-input"
 			  value={selectedDate} 
 			  onChange={e => setSelectedDate(e.target.value)}
 			/>
@@ -125,11 +128,14 @@ export default function BookingPage() {
 		{loading && <p> Loading ... </p>}
 		
 		{selected && (
-		  <div style={{marginTop: "1rem"}}>
-		    <h3> Booking Details: </h3>
+		  <div className="booking-section">
 		    <strong>Selected Time:</strong> {selected}
-			<strong> Duration: </strong>
-			<select value={duration ?? ""} onChange={e => setDuration(Number(e.target.value))}>
+			<h3> Duration: </h3>
+			<select 
+			  className="booking-select"
+			  value={duration ?? ""} 
+			  onChange={e => setDuration(Number(e.target.value))}
+			>
               <option value={""} disabled>Select Duration</option>
 			  {durationOptions.map(min => (
 				<option key={min} value={min}>
@@ -137,8 +143,8 @@ export default function BookingPage() {
 				</option>
 			  ))}
             </select>
-			<div style={{ marginTop: "1rem" }}>
-              <label>Pilot Name: </label>
+			<div className="booking-section">
+              <h3>Pilot Name: </h3>
               <input
                 type="text"
                 value={pilotName}
@@ -146,12 +152,12 @@ export default function BookingPage() {
               />
 			</div>
 			<button
-              style={{ marginTop: "1rem", padding: "0.5rem 1rem" }}
+              className="book-btn"
               onClick={handleBook} > Book Now </button>
 	      </div>
 		)}
 		{success && (
-          <p style={{ color: "green", marginTop: "1rem" }}>
+          <p className="success-message">
             Booking created successfully!
           </p>
       )}
