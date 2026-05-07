@@ -40,7 +40,11 @@ function computeDurations(start: string, freeSlots: string[]) {
     const slotMin = toMin(slot);
 
     // Stop if we hit closing time or another booking
-    if (slotMin > closingMin) break;
+    if (slotMin === closingMin) {
+	  durations.push(slotMin - startMin);
+	  break;
+	}
+	if (slotMin >= closingMin) break;
     if (slotMin - lastMin !== 30) break;
 
     durations.push(slotMin - startMin);
