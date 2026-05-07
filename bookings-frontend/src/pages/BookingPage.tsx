@@ -3,12 +3,60 @@ import { getAvailability, createBooking } from "../api/bookings";
 import ShipDropDown from "../components/ShipDropDown";
 import ShipAvailability from "../components/ShipAvailability";
 
+function formatDuration(min: number) {
+  const hours = Math.floor(min / 60);
+  const minutes = min % 60;
+
+  if (hours === 0) {
+    return `${minutes} minutes`;
+  }
+
+  if (minutes === 0) {
+    return `${hours} hour${hours > 1 ? "s" : ""}`;
+  }
+
+  return `${hours} hour${hours > 1 ? "s" : ""} ${minutes} minutes`;
+}
+
+function computeDurations(start: string, freeSlots: string[]) {
+  const toMin = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const startMin = toMin(start);
+  const closingMin = 22 * 60; // 22:00
+
+  // Sort free slots just in case
+  const sorted = [...freeSlots].sort();
+
+  // Find all free slots AFTER the start time
+  const afterStart = sorted.filter(t => toMin(t) > startMin);
+
+  const durations: number[] = [];
+  let lastMin = startMin;
+
+  for (const slot of afterStart) {
+    const slotMin = toMin(slot);
+
+    // Stop if we hit closing time or another booking
+    if (slotMin > closingMin) break;
+    if (slotMin - lastMin !== 30) break;
+
+    durations.push(slotMin - startMin);
+    lastMin = slotMin;
+  }
+
+  return durations;
+}
+
 export default function BookingPage() {
 	const [selectedShipId, setSelectedShipId] = useState<number | null>(null);
 	const [selectedDate, setSelectedDate] = useState("");
 	const [free, setFree] = useState<string[]>([]);
 	const [selected, setSelected] = useState<string | null>(null);
-	const [duration, setDuration] = useState(30);
+	const [durationOptions, setDurationOptions] = useState<number[]>([]);
+	const [duration, setDuration] = useState<number | null>(null);
     const [pilotName, setPilotName] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
@@ -25,9 +73,22 @@ export default function BookingPage() {
 			.finally(() => setLoading(false));
 	}, [selectedShipId, selectedDate]);
 	
+	useEffect(() => {
+	  if (selected) {
+		const options = computeDurations(selected, free);
+		setDurationOptions(options);
+		setDuration(null);
+	  }
+	}, [selected, free]);
+	
 	const handleBook = async () => {
 		if (!selectedShipId || !selectedDate || !selected) return;
 		const startTime = `${selectedDate}T${selected}:00`;
+		
+		if (!duration) {
+		    alert("Please select a duration");
+		    return;
+		}
 
 		const res = await createBooking({
 		  shipId: selectedShipId,
@@ -68,12 +129,13 @@ export default function BookingPage() {
 		    <h3> Booking Details: </h3>
 		    <strong>Selected Time:</strong> {selected}
 			<strong> Duration: </strong>
-			<select value={duration} onChange={e => setDuration(Number(e.target.value))}>
-              <option value={30}>30 minutes</option>
-              <option value={60}>1 hour</option>
-              <option value={90}>1.5 hours</option>
-              <option value={120}>2 hours</option>
-              <option value={150}>2.5 hours</option>
+			<select value={duration ?? ""} onChange={e => setDuration(Number(e.target.value))}>
+              <option value={""} disabled>Select Duration</option>
+			  {durationOptions.map(min => (
+				<option key={min} value={min}>
+				  {formatDuration(min)}
+				</option>
+			  ))}
             </select>
 			<div style={{ marginTop: "1rem" }}>
               <label>Pilot Name: </label>

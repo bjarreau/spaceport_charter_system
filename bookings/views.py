@@ -54,7 +54,7 @@ def get_ship_availability(request, ship_id):
     #compute slots in 30 minute increments - seems reasonable 
     slots = []
     t = start_time
-    while t <= end_time:
+    while t < end_time:
         slots.append(t.strftime("%H:%M"))
         t += timedelta(minutes=30)
     
