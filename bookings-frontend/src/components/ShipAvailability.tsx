@@ -1,8 +1,14 @@
+import {computeDurations} from "../utils/time_utils";
+
 type Props = {
   free: string[];
   onSelect: (slot: string) => void;
   selected: string | null;
 };
+
+function has30Minutes(start: string, freeSlots: string[]) {
+  return computeDurations(start, freeSlots).length > 0;
+}
 
 export default function ShipAvailability({ free, onSelect, selected }: Props) {
 	return (
@@ -11,7 +17,7 @@ export default function ShipAvailability({ free, onSelect, selected }: Props) {
 		{free.length === 0 && <p>No available times on this date. </p>}
 		
 		<div className="timeslot-grid">
-		  {free.map(slot => (
+		  {free.filter(slot => has30Minutes(slot, free)).map(slot => (
 		    <button key={slot} 
 			  className={
                 "timeslot-btn" + (selected === slot ? " selected" : "")
